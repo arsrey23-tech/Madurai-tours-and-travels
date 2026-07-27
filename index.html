@@ -1,663 +1,423 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Madurai Tours and Travels | All States Tour Packages</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Alpine.js for State Tab Filtering -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <title>Madurai Tours & Travels - State Destinations</title>
+    <style>
+        :root {
+            --primary-color: #0f172a;
+            --accent-color: #f59e0b;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #334155;
+            --text-light: #64748b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 10px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        header h1 span {
+            color: var(--accent-color);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        /* Views management */
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        /* State Selection Page Styles */
+        .selection-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .selection-header h2 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .selection-header p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .states-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 12px;
+        }
+
+        .state-btn {
+            background: var(--card-bg);
+            border: 2px solid #e2e8f0;
+            padding: 14px 10px;
+            text-align: center;
+            border-radius: 10px;
+            font-weight: 600;
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .state-btn:hover {
+            border-color: var(--accent-color);
+            background-color: #fffbeb;
+            transform: translateY(-2px);
+        }
+
+        /* Details Page Styles */
+        .back-btn {
+            background: none;
+            border: none;
+            color: #2563eb;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 20px;
+            padding: 0;
+        }
+
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+
+        .destination-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid var(--accent-color);
+        }
+
+        .destination-card h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-size: 1.3rem;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 10px;
+        }
+
+        .spot-item {
+            margin-bottom: 12px;
+        }
+
+        .spot-name {
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .spot-details, .spot-activities {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 3px;
+        }
+
+        .whatsapp-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .whatsapp-btn {
+            background-color: #25d366;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 30px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .whatsapp-btn:hover {
+            background-color: #22bf5b;
+        }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans" x-data="{ activeState: 'kerala' }">
+<body>
 
-    <!-- Top Bar -->
-    <div class="bg-blue-900 text-white text-sm py-2 px-4">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
-            <div class="flex items-center gap-4">
-                <span><i class="fa-solid fa-phone text-amber-400 mr-2"></i> +91 96770 42716</span>
-                <span><i class="fa-solid fa-envelope text-amber-400 mr-2"></i> info@maduraitourstravels.com</span>
-            </div>
-            <div class="flex items-center gap-3">
-                <a href="#" class="hover:text-amber-400 transition"><i class="fa-brands fa-facebook-f"></i></a>
-                <a href="#" class="hover:text-amber-400 transition"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://wa.me/919677042716?text=Hi,%20I%20would%20like%20to%20know%20more%20about%20your%20all-India%20state%20tour%20packages." target="_blank" class="hover:text-amber-400 transition"><i class="fa-brands fa-whatsapp"></i></a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Navigation Bar -->
-    <nav class="sticky top-0 z-50 bg-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-            <a href="#" class="text-2xl font-bold text-blue-900 flex items-center gap-2">
-                <i class="fa-solid fa-earth-americas text-amber-500"></i> Madurai <span class="text-amber-500">Tours & Travels</span>
-            </a>
-            <div class="hidden md:flex items-center gap-8 font-medium">
-                <a href="#home" class="text-blue-900 hover:text-amber-500 transition">Home</a>
-                <a href="#states" class="text-slate-600 hover:text-amber-500 transition">All States Directory</a>
-                <a href="#rates" class="text-slate-600 hover:text-amber-500 transition">Rental Tariffs</a>
-                <a href="#about" class="text-slate-600 hover:text-amber-500 transition">About Us</a>
-                <a href="#contact" class="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2 rounded-full shadow transition">Inquire Now</a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <header id="home" class="relative bg-blue-900 text-white py-28 px-4 bg-cover bg-center" style="background-image: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.75)), url('https://images.unsplash.com/photo-1524492412937-b28074a5d7da?q=80&w=1920&auto=format&fit=crop');">
-        <div class="max-w-4xl mx-auto text-center">
-            <span class="bg-amber-500 text-white text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider mb-4 inline-block">Complete State-by-State Guide</span>
-            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">Discover Perfect Destinations Across Every State in India</h1>
-            <p class="text-lg md:text-xl text-slate-200 mb-8 max-w-2xl mx-auto">Browse destination highlights for every Indian state. Pick your spots, set your custom timeline, and instantly book via WhatsApp.</p>
-            <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <a href="#states" class="bg-amber-500 hover:bg-amber-600 text-white font-semibold px-8 py-3 rounded-lg shadow-lg transition">Explore States</a>
-                <a href="#contact" class="bg-white hover:bg-slate-100 text-blue-900 font-semibold px-8 py-3 rounded-lg shadow-lg transition">Direct WhatsApp Chat</a>
-            </div>
-        </div>
+    <header>
+        <h1>Madurai <span>Tours & Travels</span></h1>
     </header>
 
-    <!-- State-Specific Tour Directory Section -->
-    <section id="states" class="py-20 px-4 max-w-7xl mx-auto">
-        <div class="text-center mb-10">
-            <h2 class="text-3xl font-bold text-blue-900 mb-2">Select State to View Destinations</h2>
-            <div class="w-20 h-1 bg-amber-500 mx-auto rounded"></div>
-            <p class="text-slate-600 mt-3">Click on any state tab below to explore its premier tourist attractions</p>
-        </div>
-
-        <!-- State Navigation Tabs (All Major States Included) -->
-        <div class="flex flex-wrap justify-center gap-2 mb-14 max-w-5xl mx-auto">
-            <button @click="activeState = 'kerala'" :class="activeState === 'kerala' ? 'bg-blue-900 text-white shadow-lg' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'" class="px-4 py-2.5 rounded-xl font-semibold transition text-sm">Kerala</button>
-            <button @click="activeState = 'tamilnadu'" :class="activeState === 'tamilnadu' ? 'bg-blue-900 text-white shadow-lg' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'" class="px-4 py-2.5 rounded-xl font-semibold transition text-sm">Tamil Nadu</button>
-            <button @click="activeState = 'karnataka'" :class="activeState === 'karnataka' ? 'bg-blue-900 text-white shadow-lg' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'" class="px-4 py-2.5 rounded-xl font-semibold transition text-sm">Karnataka</button>
-            <button @click="activeState = 'goa'" :class="activeState === 'goa' ? 'bg-blue-900 text-white shadow-lg' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'" class="px-4 py-2.5 rounded-xl font-semibold transition text-sm">Goa</button>
-            <button @click="activeState = 'maharashtra'" :class="activeState === 'maharashtra' ? 'bg-blue-900 text-white shadow-lg' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'" class="px-4 py-2.5 rounded-xl font-semibold transition text-sm">Maharashtra</button>
-            <button @click="activeState = 'rajasthan'" :class="activeState === 'rajasthan' ? 'bg-blue-900 text-white shadow-lg' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'" class="px-4 py-2.5 rounded-xl font-semibold transition text-sm">Rajasthan</button>
-            <button @click="activeState = 'uttarpradesh'" :class="activeState === 'uttarpradesh' ? 'bg-blue-900 text-white shadow-lg' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'" class="px-4 py-2.5 rounded-xl font-semibold transition text-sm">Uttar Pradesh</button>
-            <button @click="activeState = 'kashmir'" :class="activeState === 'kashmir' ? 'bg-blue-900 text-white shadow-lg' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'" class="px-4 py-2.5 rounded-xl font-semibold transition text-sm">Jammu & Kashmir</button>
-            <button @click="activeState = 'himachal'" :class="activeState === 'himachal' ? 'bg-blue-900 text-white shadow-lg' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'" class="px-4 py-2.5 rounded-xl font-semibold transition text-sm">Himachal Pradesh</button>
-            <button @click="activeState = 'uttarakhand'" :class="activeState === 'uttarakhand' ? 'bg-blue-900 text-white shadow-lg' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'" class="px-4 py-2.5 rounded-xl font-semibold transition text-sm">Uttarakhand</button>
-            <button @click="activeState = 'punjab'" :class="activeState === 'punjab' ? 'bg-blue-900 text-white shadow-lg' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'" class="px-4 py-2.5 rounded-xl font-semibold transition text-sm">Punjab</button>
-            <button @click="activeState = 'delhi'" :class="activeState === 'delhi' ? 'bg-blue-900 text-white shadow-lg' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'" class="px-4 py-2.5 rounded-xl font-semibold transition text-sm">Delhi NCR</button>
-            <button @click="activeState = 'gujarat'" :class="activeState === 'gujarat' ? 'bg-blue-900 text-white shadow-lg' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'" class="px-4 py-2.5 rounded-xl font-semibold transition text-sm">Gujarat</button>
-            <button @click="activeState = 'madhyapradesh'" :class="activeState === 'madhyapradesh' ? 'bg-blue-900 text-white shadow-lg' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'" class="px-4 py-2.5 rounded-xl font-semibold transition text-sm">Madhya Pradesh</button>
-            <button @click="activeState = 'andhra'" :class="activeState === 'andhra' ? 'bg-blue-900 text-white shadow-lg' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'" class="px-4 py-2.5 rounded-xl font-semibold transition text-sm">Andhra Pradesh</button>
-            <button @click="activeState = 'telangana'" :class="activeState === 'telangana' ? 'bg-blue-900 text-white shadow-lg' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'" class="px-4 py-2.5 rounded-xl font-semibold transition text-sm">Telangana</button>
-            <button @click="activeState = 'westbengal'" :class="activeState === 'westbengal' ? 'bg-blue-900 text-white shadow-lg' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'" class="px-4 py-2.5 rounded-xl font-semibold transition text-sm">West Bengal</button>
-            <button @click="activeState = 'odisha'" :class="activeState === 'odisha' ? 'bg-blue-900 text-white shadow-lg' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'" class="px-4 py-2.5 rounded-xl font-semibold transition text-sm">Odisha</button>
-            <button @click="activeState = 'bihar'" :class="activeState === 'bihar' ? 'bg-blue-900 text-white shadow-lg' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'" class="px-4 py-2.5 rounded-xl font-semibold transition text-sm">Bihar</button>
-            <button @click="activeState = 'assam'" :class="activeState === 'assam' ? 'bg-blue-900 text-white shadow-lg' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'" class="px-4 py-2.5 rounded-xl font-semibold transition text-sm">Assam / North East</button>
-        </div>
-
-        <!-- 1. KERALA -->
-        <div x-show="activeState === 'kerala'" class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Hill Station</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Munnar</h3><p class="text-slate-600 text-sm mb-4">Tea plantations, Eravikulam National Park, Mattupetty Dam, and Anamudi peak views.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Munnar,%20Kerala." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
+    <div class="container">
+        
+        <!-- VIEW 1: State Selection Grid -->
+        <div id="selectionView" class="view active">
+            <div class="selection-header">
+                <h2>Select State to View Destinations</h2>
+                <p>Click on any state tab below to explore its premier tourist attractions</p>
             </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1593693397690-362cb9666fc2?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Backwaters</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Alleppey (Alappuzha)</h3><p class="text-slate-600 text-sm mb-4">Houseboat cruises over Vembanad Lake, serene canals, and local coastal cuisine.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Alleppey,%20Kerala." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Wildlife & Spice</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Thekkady & Wayanad</h3><p class="text-slate-600 text-sm mb-4">Periyar tiger reserve boat safaris, spice garden walks, and Wayanad caves.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Thekkady/Wayanad,%20Kerala." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
+            <div class="states-grid" id="statesGrid">
+                <!-- Populated dynamically via script -->
             </div>
         </div>
 
-        <!-- 2. TAMIL NADU -->
-        <div x-show="activeState === 'tamilnadu'" class="grid grid-cols-1 md:grid-cols-3 gap-8" style="display: none;">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Heritage City</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Madurai</h3><p class="text-slate-600 text-sm mb-4">Sri Meenakshi Amman Temple, Thirumalai Nayakkar Palace, and rich cultural heritage.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Madurai,%20Tamil%20Nadu." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Hill Station</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Ooty & Kodaikanal</h3><p class="text-slate-600 text-sm mb-4">Nilgiri mountain toy train, botanical gardens, pine forests, and misty lakes.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Ooty/Kodaikanal,%20Tamil%20Nadu." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1617854818583-09e7f077a156?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Coastal Pilgrimage</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Rameshwaram & Kanyakumari</h3><p class="text-slate-600 text-sm mb-4">Pamban bridge, Dhanushkodi ghost town, and the southernmost tip of India.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Rameshwaram/Kanyakumari,%20Tamil%20Nadu." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-        </div>
-
-        <!-- 3. KARNATAKA -->
-        <div x-show="activeState === 'karnataka'" class="grid grid-cols-1 md:grid-cols-3 gap-8" style="display: none;">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1590001155093-a3c68ab0acfb?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Royal Heritage</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Mysore & Bangalore</h3><p class="text-slate-600 text-sm mb-4">Mysore Palace illumination, Brindavan Gardens, and Bangalore tech parks & palaces.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Mysore/Bangalore,%20Karnataka." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1620756711421-57d383796397?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Coffee Land</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Coorg (Kodagu)</h3><p class="text-slate-600 text-sm mb-4">Coffee plantations, Abbey Falls, Dubare elephant camp, and Raja's Seat sunset views.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Coorg,%20Karnataka." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Ancient Ruins</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Hampi & Badami</h3><p class="text-slate-600 text-sm mb-4">UNESCO World Heritage site stone chariot, Vijayanagara ruins, and cave temples.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Hampi,%20Karnataka." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-        </div>
-
-        <!-- 4. GOA -->
-        <div x-show="activeState === 'goa'" class="grid grid-cols-1 md:grid-cols-3 gap-8" style="display: none;">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Party & Beaches</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">North Goa</h3><p class="text-slate-600 text-sm mb-4">Baga, Calangute, Anjuna beaches, beach shacks, water sports, and vibrant nightlife.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20North%20Goa." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Relaxed Shores</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">South Goa</h3><p class="text-slate-600 text-sm mb-4">Palolem & Colva pristine sands, luxury resorts, and calm peaceful environments.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20South%20Goa." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1589308078059-be1415eab4c3?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Nature & Falls</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Dudhsagar & Old Goa</h3><p class="text-slate-600 text-sm mb-4">Four-wheel jungle safari to Dudhsagar waterfalls and historic Portuguese cathedrals.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Dudhsagar%20Goa." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-        </div>
-
-        <!-- 5. MAHARASHTRA -->
-        <div x-show="activeState === 'maharashtra'" class="grid grid-cols-1 md:grid-cols-3 gap-8" style="display: none;">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Financial Capital</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Mumbai City Tour</h3><p class="text-slate-600 text-sm mb-4">Gateway of India, Marine Drive, Elephanta Caves, and Bollywood landmarks.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Mumbai,%20Maharashtra." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1597735853381-d13c75a40b3c?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Hill Station</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Lonavala & Khandala</h3><p class="text-slate-600 text-sm mb-4">Bhushi Dam, Tiger's Leap, Karla Caves, and lush Western Ghat mountain mist.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Lonavala,%20Maharashtra." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Ancient Caves</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Ajanta & Ellora Caves</h3><p class="text-slate-600 text-sm mb-4">UNESCO rock-cut architectural marvels near Aurangabad (Chhatrapati Sambhajinagar).</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Ajanta/Ellora,%20Maharashtra." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-        </div>
-
-        <!-- 6. RAJASTHAN -->
-        <div x-show="activeState === 'rajasthan'" class="grid grid-cols-1 md:grid-cols-3 gap-8" style="display: none;">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Pink City</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Jaipur</h3><p class="text-slate-600 text-sm mb-4">Amber Fort elephant rides, Hawa Mahal, City Palace, and Jantar Mantar observatory.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Jaipur,%20Rajasthan." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Lake City</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Udaipur</h3><p class="text-slate-600 text-sm mb-4">Lake Pichola boat rides, City Palace Udaipur, Saheliyon-ki-Bari, and romantic vistas.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Udaipur,%20Rajasthan." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1509299349637-e832d5644837?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Desert Dunes</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Jaisalmer & Jodhpur</h3><p class="text-slate-600 text-sm mb-4">Golden Fort, Thar desert camel safaris, and Mehrangarh blue city fort views.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Jaisalmer/Jodhpur,%20Rajasthan." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-        </div>
-
-        <!-- 7. UTTAR PRADESH -->
-        <div x-show="activeState === 'uttarpradesh'" class="grid grid-cols-1 md:grid-cols-3 gap-8" style="display: none;">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">World Wonder</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Agra</h3><p class="text-slate-600 text-sm mb-4">Taj Mahal sunrise tour, Agra Fort, Mehtab Bagh, and Fatehpur Sikri heritage.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Agra,%20Uttar%20Pradesh." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1578593139884-2453676839a9?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Spiritual Ghats</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Varanasi (Kashi)</h3><p class="text-slate-600 text-sm mb-4">Ganga Aarti at Dashashwamedh Ghat, morning boat rides, and Kashi Vishwanath temple.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Varanasi,%20Uttar%20Pradesh." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1592635198963-24bb6fd5e02e?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Temple & Heritage</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Ayodhya & Mathura</h3><p class="text-slate-600 text-sm mb-4">Ram Mandir darshan in Ayodhya and Krishna Janmabhoomi temple tours in Mathura.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Ayodhya/Mathura,%20Uttar%20Pradesh." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-        </div>
-
-        <!-- 8. JAMMU & KASHMIR -->
-        <div x-show="activeState === 'kashmir'" class="grid grid-cols-1 md:grid-cols-3 gap-8" style="display: none;">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1595815771614-ade9d652a65d?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Lake City</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Srinagar</h3><p class="text-slate-600 text-sm mb-4">Dal Lake Shikara rides, Mughal gardens, and luxurious wooden houseboat stays.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Srinagar,%20Kashmir." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1566838852146-5c93a31761b2?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Snow Slopes</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Gulmarg</h3><p class="text-slate-600 text-sm mb-4">Gulmarg Gondola cable car (Asia's highest), snow activities, and alpine meadows.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Gulmarg,%20Kashmir." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1581793745862-99fde7bb73d2?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Alpine Valley</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Pahalgam</h3><p class="text-slate-600 text-sm mb-4">Betaab Valley, Aru Valley pine forests, and Lidder river stream view points.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Pahalgam,%20Kashmir." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-        </div>
-
-        <!-- 9. HIMACHAL PRADESH -->
-        <div x-show="activeState === 'himachal'" class="grid grid-cols-1 md:grid-cols-3 gap-8" style="display: none;">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Valley Resort</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Manali & Solang Valley</h3><p class="text-slate-600 text-sm mb-4">Atal Tunnel, Solang adventure sports, Rohtang pass snow, and Hadimba temple.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Manali,%20Himachal." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1605649487212-47bdab064df7?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Colonial Town</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Shimla & Kufri</h3><p class="text-slate-600 text-sm mb-4">The Ridge, Mall Road shopping, Jakhoo temple, and Kufri snow amusement parks.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Shimla,%20Himachal." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1598091383028-de0eece3232c?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Spiritual Hub</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Dharamshala & McLeodGanj</h3><p class="text-slate-600 text-sm mb-4">Dalai Lama temple, Bhagsu waterfalls, and Tibetan cultural markets in the mountains.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Dharamshala,%20Himachal." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-        </div>
-
-        <!-- 10. UTTARAKHAND -->
-        <div x-show="activeState === 'uttarakhand'" class="grid grid-cols-1 md:grid-cols-3 gap-8" style="display: none;">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Yoga Capital</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Rishikesh & Haridwar</h3><p class="text-slate-600 text-sm mb-4">Laxman Jhula, river rafting on Ganga, Triveni Ghat aarti, and Beatles ashram.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Rishikesh,%20Uttarakhand." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1605649487212-47bdab064df7?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Wildlife Reserve</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Jim Corbett National Park</h3><p class="text-slate-600 text-sm mb-4">Jeep safaris through tiger habitats, elephant sightings, and jungle resort stays.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Jim%20Corbett,%20Uttarakhand." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1578637387939-43c525550085?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Hill Station</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Nainital & Mussoorie</h3><p class="text-slate-600 text-sm mb-4">Naini Lake boating, Mall Road strolling, and Kempty Falls scenic mountain views.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Nainital/Mussoorie,%20Uttarakhand." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-        </div>
-
-        <!-- 11. PUNJAB -->
-        <div x-show="activeState === 'punjab'" class="grid grid-cols-1 md:grid-cols-3 gap-8" style="display: none;">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1514222709107-a180c68d72b8?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Spiritual Landmark</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Amritsar Golden Temple</h3><p class="text-slate-600 text-sm mb-4">Sri Harmandir Sahib golden shrine, Wagah Border retreat ceremony, and Jallianwala Bagh.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Amritsar,%20Punjab." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Planned City</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Chandigarh</h3><p class="text-slate-600 text-sm mb-4">Rock Garden of Chandigarh, Sukhna Lake boating, and Rose Garden.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Chandigarh,%20Punjab." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Heritage Forts</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Patiala & Jalandhar</h3><p class="text-slate-600 text-sm mb-4">Qila Mubarak fort complex, Sheesh Mahal, and rich Punjabi cultural displays.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Patiala,%20Punjab." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-        </div>
-
-        <!-- 12. DELHI NCR -->
-        <div x-show="activeState === 'delhi'" class="grid grid-cols-1 md:grid-cols-3 gap-8" style="display: none;">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Historical Capital</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Old & New Delhi Tour</h3><p class="text-slate-600 text-sm mb-4">Red Fort, Qutub Minar, India Gate, Humayun's Tomb, and Chandni Chowk food walks.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Delhi%20sightseeing." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1592635198963-24bb6fd5e02e?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Architectural Marvel</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Akshardham & Lotus Temple</h3><p class="text-slate-600 text-sm mb-4">Swaminarayan Akshardham temple complex, Lotus Temple, and modern city monuments.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Delhi%20temple%20tour." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Shopping & Hubs</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Connaught Place & Markets</h3><p class="text-slate-600 text-sm mb-4">Janpath shopping, Sarojini Nagar, Dilli Haat artisan crafts, and fine dining.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Delhi%20shopping%20tour." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-        </div>
-
-        <!-- 13. GUJARAT -->
-        <div x-show="activeState === 'gujarat'" class="grid grid-cols-1 md:grid-cols-3 gap-8" style="display: none;">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1609756456347-160f67e54366?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">World Landmark</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Statue of Unity (Kevadia)</h3><p class="text-slate-600 text-sm mb-4">World's tallest statue of Sardar Vallabhbhai Patel, Sardar Sarovar Dam, and Valley of Flowers.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Statue%20of%20Unity,%20Gujarat." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1590001155093-a3c68ab0acfb?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Wildlife Sanctuary</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Gir National Park</h3><p class="text-slate-600 text-sm mb-4">The only natural habitat of the majestic Asiatic lions with guided open jeep safaris.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Gir%20Forest,%20Gujarat." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">White Salt Desert</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Rann of Kutch</h3><p class="text-slate-600 text-sm mb-4">Vast white salt flats, Rann Utsav cultural festival, and Handicraft villages.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Rann%20of%20Kutch,%20Gujarat." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-        </div>
-
-        <!-- 14. MADHYA PRADESH -->
-        <div x-show="activeState === 'madhyapradesh'" class="grid grid-cols-1 md:grid-cols-3 gap-8" style="display: none;">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">UNESCO Sculptures</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Khajuraho Temples</h3><p class="text-slate-600 text-sm mb-4">World-famous medieval Hindu and Jain temples known for exquisite architectural carvings.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Khajuraho,%20Madhya%20Pradesh." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1590001155093-a3c68ab0acfb?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Tiger Reserves</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Bandhavgarh & Kanha</h3><p class="text-slate-600 text-sm mb-4">Premier national parks offering thrilling tiger safaris and rich wildlife photography.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Bandhavgarh/Kanha,%20MP." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Palace & Lake</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Ujjain & Indore</h3><p class="text-slate-600 text-sm mb-4">Mahakaleshwar Jyotirlinga in Ujjain and Rajwada palace in Indore.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Ujjain/Indore,%20MP." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-        </div>
-
-        <!-- 15. ANDHRA PRADESH -->
-        <div x-show="activeState === 'andhra'" class="grid grid-cols-1 md:grid-cols-3 gap-8" style="display: none;">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1592635198963-24bb6fd5e02e?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Spiritual Shrine</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Tirupati Balaji</h3><p class="text-slate-600 text-sm mb-4">Sri Venkateswara Temple on the Seven Hills of Tirumala, receiving millions of devotees.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Tirupati,%20Andhra%20Pradesh." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Coastal City</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Visag (Vizag) Beaches</h3><p class="text-slate-600 text-sm mb-4">RK Beach, Submarine Museum, Araku Valley hill train, and Borra limestone caves.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Vizag/Araku,%20Andhra%20Pradesh." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Hill Station</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Horsley Hills</h3><p class="text-slate-600 text-sm mb-4">Peaceful Andhra hill station offering cool climate, eucalyptus trees, and viewpoints.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Horsley%20Hills,%20Andhra." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-        </div>
-
-        <!-- 16. TELANGANA -->
-        <div x-show="activeState === 'telangana'" class="grid grid-cols-1 md:grid-cols-3 gap-8" style="display: none;">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">City of Pearls</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Hyderabad Heritage</h3><p class="text-slate-600 text-sm mb-4">Charminar, Golconda Fort sound & light show, Chowmahalla Palace, and Ramoji Film City.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Hyderabad,%20Telangana." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1592635198963-24bb6fd5e02e?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Temple Architecture</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Warangal & Bhadrachalam</h3><p class="text-slate-600 text-sm mb-4">Thousand Pillar Temple, Warangal Fort ruins, and sacred Godavari river banks.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Warangal,%20Telangana." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Nature & Dam</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Nagarjuna Sagar</h3><p class="text-slate-600 text-sm mb-4">Massive masonry dam, island museum of Buddhist artifacts, and scenic boat rides.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Nagarjuna%20Sagar,%20Telangana." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-        </div>
-
-        <!-- 17. WEST BENGAL -->
-        <div x-show="activeState === 'westbengal'" class="grid grid-cols-1 md:grid-cols-3 gap-8" style="display: none;">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1558431382-27e303142255?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Tea & Himalayas</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Darjeeling</h3><p class="text-slate-600 text-sm mb-4">Tiger Hill sunrise over Kanchenjunga, Darjeeling Himalayan Toy Train, and tea gardens.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Darjeeling,%20West%20Bengal." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Cultural Capital</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Kolkata City Tour</h3><p class="text-slate-600 text-sm mb-4">Victoria Memorial, Howrah Bridge, Dakshineswar Kali Temple, and street food culture.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Kolkata,%20West%20Bengal." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1590001155093-a3c68ab0acfb?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Mangrove Delta</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Sundarbans National Park</h3><p class="text-slate-600 text-sm mb-4">Boat safaris through mangrove forests and Royal Bengal Tiger tracking.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Sundarbans,%20West%20Bengal." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-        </div>
-
-        <!-- 18. ODISHA -->
-        <div x-show="activeState === 'odisha'" class="grid grid-cols-1 md:grid-cols-3 gap-8" style="display: none;">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Temple Town</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Puri & Konark</h3><p class="text-slate-600 text-sm mb-4">Jagannath Temple in Puri, golden beaches, and the 13th-century Sun Temple in Konark.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Puri/Konark,%20Odisha." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Temple City</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Bhubaneswar</h3><p class="text-slate-600 text-sm mb-4">Lingaraja Temple, Mukteswar Temple, Udayagiri & Khandagiri Jain rock-cut caves.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Bhubaneswar,%20Odisha." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1593693397690-362cb9666fc2?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Lagoon & Birds</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Chilika Lake</h3><p class="text-slate-600 text-sm mb-4">Asia's largest brackish water lagoon, migratory birds, and Irrawaddy dolphin boat tours.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Chilika%20Lake,%20Odisha." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-        </div>
-
-        <!-- 19. BIHAR -->
-        <div x-show="activeState === 'bihar'" class="grid grid-cols-1 md:grid-cols-3 gap-8" style="display: none;">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Buddhist Pilgrimage</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Bodh Gaya</h3><p class="text-slate-600 text-sm mb-4">Mahabodhi Temple UNESCO site where Gautama Buddha attained enlightenment under the Bodhi tree.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Bodh%20Gaya,%20Bihar." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Ancient University</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Nalanda & Rajgir</h3><p class="text-slate-600 text-sm mb-4">Ruins of ancient Nalanda University, Griddhakuta Peak, and Vishwa Shanti Stupa.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Nalanda/Rajgir,%20Bihar." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Capital City</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Patna</h3><p class="text-slate-600 text-sm mb-4">Golghar granary, Patna Sahib Gurudwara, and Bihar Museum artifacts.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Patna,%20Bihar." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-        </div>
-
-        <!-- 20. ASSAM / NORTH EAST -->
-        <div x-show="activeState === 'assam'" class="grid grid-cols-1 md:grid-cols-3 gap-8" style="display: none;">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1590001155093-a3c68ab0acfb?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Wildlife Safari</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Kaziranga National Park</h3><p class="text-slate-600 text-sm mb-4">UNESCO World Heritage site famous for the great Indian one-horned rhinoceros.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Kaziranga,%20Assam." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1558431382-27e303142255?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">River Island</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Guwahati & Majuli</h3><p class="text-slate-600 text-sm mb-4">Kamakhya Temple in Guwahati and Majuli, the world's largest river island on the Brahmaputra.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Guwahati/Assam." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border flex flex-col justify-between">
-                <div><img src="https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=600&auto=format&fit=crop" class="w-full h-52 object-cover">
-                    <div class="p-6"><span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">Cloud Land</span><h3 class="text-xl font-bold text-blue-900 mt-2 mb-2">Shillong & Meghalaya</h3><p class="text-slate-600 text-sm mb-4">Living root bridges in Cherrapunji, Mawlynnong cleanest village, and cascading waterfalls.</p></div>
-                </div>
-                <div class="p-6 pt-0"><a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20Shillong/Meghalaya." target="_blank" class="block text-center bg-blue-900 hover:bg-amber-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">Inquire via WhatsApp</a></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Rental Rates Section -->
-    <section id="rates" class="py-20 bg-blue-50 px-4">
-        <div class="max-w-5xl mx-auto">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl font-bold text-blue-900 mb-2">Transparent Rental Tariffs</h2>
-                <div class="w-20 h-1 bg-amber-500 mx-auto rounded"></div>
-                <p class="text-slate-600 mt-3">Affordable outstation cab options for custom state-to-state travel across India</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="bg-white rounded-xl shadow-md p-8 border-t-4 border-blue-900">
-                    <h3 class="text-xl font-bold text-blue-900 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-road text-amber-500"></i> Outstation Kilometer Tariff
-                    </h3>
-                    <p class="text-slate-600 mb-6 text-sm">Ideal for cross-country journeys where you define the travel path.</p>
-                    <ul class="space-y-3 mb-6 text-sm">
-                        <li class="flex justify-between border-b pb-2">
-                            <span class="text-slate-600">Per Kilometer Rate:</span>
-                            <span class="font-bold text-blue-900">₹14 - ₹15 / km</span>
-                        </li>
-                        <li class="flex justify-between border-b pb-2">
-                            <span class="text-slate-600">Daily Driver Rent / Batta:</span>
-                            <span class="font-bold text-blue-900">₹1,500 / day</span>
-                        </li>
-                    </ul>
-                    <a href="https://wa.me/919677042716?text=Hi,%20I%20want%20an%20estimate%20based%20on%20Outstation%20Kilometer%20Tariff." target="_blank" class="block text-center bg-blue-900 text-white font-medium py-2.5 rounded-lg hover:bg-blue-800 transition">Get Estimate on WhatsApp</a>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-md p-8 border-t-4 border-amber-500">
-                    <h3 class="text-xl font-bold text-blue-900 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-calendar-days text-amber-500"></i> Fully Custom State Packages
-                    </h3>
-                    <p class="text-slate-600 mb-6 text-sm">Tell us your chosen states, specific spots, and duration for a complete bundle quote.</p>
-                    <ul class="space-y-3 mb-6 text-sm">
-                        <li class="flex justify-between border-b pb-2">
-                            <span class="text-slate-600">Package Customization:</span>
-                            <span class="font-bold text-blue-900">As Per Customer Choice</span>
-                        </li>
-                        <li class="flex justify-between border-b pb-2">
-                            <span class="text-slate-600">Includes Chauffeur Batta:</span>
-                            <span class="font-bold text-green-600">Negotiable & Bundled</span>
-                        </li>
-                    </ul>
-                    <a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20discuss%20a%20fully%20customized%20multi-state%20trip." target="_blank" class="block text-center bg-amber-500 text-white font-medium py-2.5 rounded-lg hover:bg-amber-600 transition">Discuss Custom Plan</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="py-20 px-4 max-w-7xl mx-auto">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div>
-                <img src="https://images.unsplash.com/photo-1527631746610-bca00a040d60?q=80&w=800&auto=format&fit=crop" alt="Travel team" class="rounded-2xl shadow-lg w-full h-[400px] object-cover">
-            </div>
-            <div>
-                <span class="text-amber-600 font-bold uppercase tracking-wider text-sm">About Madurai Tours & Travels</span>
-                <h2 class="text-3xl font-bold text-blue-900 mt-2 mb-4">Your Nationwide All-State Travel Partner</h2>
-                <p class="text-slate-600 mb-4">We cover premier tourist spots across every major state in India. Whether you are traveling locally within Tamil Nadu or taking a cross-country tour to Kashmir, Rajasthan, or Assam, we provide safe vehicles, verified professional drivers, and completely flexible scheduling.</p>
-                <div class="grid grid-cols-2 gap-4 mt-6">
-                    <div class="flex items-center gap-3">
-                        <div class="bg-amber-100 text-amber-600 p-3 rounded-lg"><i class="fa-solid fa-shield-halved text-xl"></i></div>
-                        <div>
-                            <h4 class="font-bold text-blue-900">Safe Rides</h4>
-                            <p class="text-xs text-slate-500">Experienced drivers</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <div class="bg-amber-100 text-amber-600 p-3 rounded-lg"><i class="fa-solid fa-wallet text-xl"></i></div>
-                        <div>
-                            <h4 class="font-bold text-blue-900">Flexible Plans</h4>
-                            <p class="text-xs text-slate-500">Your choice of days</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact & Booking Section -->
-    <section id="contact" class="py-20 bg-slate-900 text-white px-4">
-        <div class="max-w-2xl mx-auto text-center">
-            <h2 class="text-3xl font-bold mb-2">Book Any State Tour Instantly</h2>
-            <div class="w-20 h-1 bg-amber-500 mx-auto rounded mb-6"></div>
-            <p class="text-slate-300 mb-8">Tap below to connect instantly on WhatsApp. Share your preferred states, specific destination spots, and dates with us.</p>
+        <!-- VIEW 2: Tour Details & WhatsApp Inquire Page -->
+        <div id="detailsView" class="view">
+            <button class="back-btn" onclick="goBack()">← Back to State Selection</button>
+            <h2 id="stateTitle" style="color: var(--primary-color); margin-top: 0;"></h2>
             
-            <div class="bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-700">
-                <div class="text-amber-400 text-5xl mb-4">
-                    <i class="fa-brands fa-whatsapp"></i>
-                </div>
-                <h3 class="text-xl font-bold text-white mb-2">Madurai Tours & Travels Desk</h3>
-                <p class="text-slate-400 text-sm mb-6">Available 24/7 for All-India State Bookings</p>
-                <a href="https://wa.me/919677042716?text=Hi,%20I%20want%20to%20book%20a%20tour%20across%20states." target="_blank" class="inline-flex items-center justify-center gap-3 bg-green-600 hover:bg-green-700 text-white font-bold px-8 py-4 rounded-xl shadow-lg transition text-lg w-full">
-                    <i class="fa-brands fa-whatsapp text-2xl"></i> Chat on WhatsApp (+91 96770 42716)
+            <div id="destinationsContainer">
+                <!-- Populated dynamically based on selected state -->
+            </div>
+
+            <div class="whatsapp-container">
+                <a id="whatsappLink" href="#" target="_blank" class="whatsapp-btn">
+                    💬 Inquire via WhatsApp
                 </a>
             </div>
         </div>
-    </section>
 
-    <!-- Footer -->
-    <footer class="bg-slate-950 text-slate-400 py-12 px-4 border-t border-slate-800">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <div>
-                <h3 class="text-white text-lg font-bold mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-earth-americas text-amber-500"></i> Madurai Tours & Travels
-                </h3>
-                <p class="text-sm">Providing premier tour packages and state-specific custom travel itineraries across India.</p>
-            </div>
-            <div>
-                <h4 class="text-white font-semibold mb-4">Quick Links</h4>
-                <ul class="space-y-2 text-sm">
-                    <li><a href="#home" class="hover:text-amber-500 transition">Home</a></li>
-                    <li><a href="#states" class="hover:text-amber-500 transition">All States Directory</a></li>
-                    <li><a href="#rates" class="hover:text-amber-500 transition">Rental Tariffs</a></li>
-                    <li><a href="#about" class="hover:text-amber-500 transition">About Us</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="text-white font-semibold mb-4">Contact Info</h4>
-                <p class="text-sm mb-2"><i class="fa-solid fa-location-dot text-amber-500 mr-2"></i> Madurai, Tamil Nadu</p>
-                <p class="text-sm mb-2"><i class="fa-solid fa-phone text-amber-500 mr-2"></i> +91 96770 42716</p>
-                <p class="text-sm"><i class="fa-solid fa-envelope text-amber-500 mr-2"></i> info@maduraitourstravels.com</p>
-            </div>
-        </div>
-        <div class="max-w-7xl mx-auto text-center border-t border-slate-800 pt-6 text-xs text-slate-500">
-            &copy; 2026 Madurai Tours & Travels. All rights reserved.
-        </div>
-    </footer>
+    </div>
 
+    <script>
+        // Comprehensive data store for all requested state destinations
+        const tourData = {
+            "Kerala": {
+                title: "Kerala Tour Packages",
+                destinations: [
+                    { name: "Munnar", spots: "Eravikulam National Park, Mattupetty Dam, Anamudi Peak", activities: "Tea factory tours and mountain trekking." },
+                    { name: "Alleppey & Kumarakom", spots: "Vembanad Lake and interlocking canal networks", activities: "Overnight traditional houseboat cruises and village canoe rides." },
+                    { name: "Thekkady", spots: "Periyar Tiger Reserve and local spice plantations", activities: "Boating safaris and elephant camp visits." }
+                ]
+            },
+            "Tamil Nadu": {
+                title: "Tamil Nadu Tour Packages",
+                destinations: [
+                    { name: "Madurai", spots: "Arulmigu Meenakshi Amman Temple and Thirumalai Nayakkar Palace", activities: "Night temple ceremonies and traditional heritage walks." },
+                    { name: "Ooty & Kodaikanal", spots: "Botanical Gardens, Nilgiri Mountain Railway, Kodaikanal Lake, Pillar Rocks", activities: "Toy train rides, boating, and scenic valley photography." },
+                    { name: "Rameshwaram & Kanyakumari", spots: "Ramanathaswamy Temple, Pamban Bridge, Vivekananda Rock Memorial", activities: "Coastal sunrise/sunset viewing and exploring Dhanushkodi beach ruins." }
+                ]
+            },
+            "Karnataka": {
+                title: "Karnataka Tour Packages",
+                destinations: [
+                    { name: "Mysore", spots: "Mysore Palace, Chamundi Hills, Brindavan Gardens", activities: "Palace light and sound shows and silk shopping." },
+                    { name: "Coorg (Kodagu)", spots: "Abbey Falls, Raja's Seat, Dubare Elephant Camp", activities: "Coffee estate walks, plantation homestay stays, and river rafting." },
+                    { name: "Bangalore", spots: "Bangalore Palace, Lalbagh Botanical Garden, Cubbon Park", activities: "City heritage walks and modern culinary tours." }
+                ]
+            },
+            "Goa": {
+                title: "Goa Tour Packages",
+                destinations: [
+                    { name: "North Goa", spots: "Baga Beach, Calangute Beach, Fort Aguada", activities: "Water sports, beach shack dining, and vibrant nightlife." },
+                    { name: "South Goa", spots: "Palolem Beach, Colva Beach, Basilica of Bom Jesus", activities: "Peaceful sunbathing, heritage church tours, and sunset river cruises." }
+                ]
+            },
+            "Maharashtra": {
+                title: "Maharashtra Tour Packages",
+                destinations: [
+                    { name: "Mumbai", spots: "Gateway of India, Marine Drive, Elephanta Caves, Chhatrapati Shivaji Terminus", activities: "Street food tours, heritage walks, and ferry rides." },
+                    { name: "Lonavala & Khandala", spots: "Tiger's Leap, Bhaja Caves, Pawna Lake", activities: "Monsoon trekking, valley viewpoints, and tasting local chikki." },
+                    { name: "Mahabaleshwar", spots: "Arthur's Seat, Venna Lake, strawberry farms", activities: "Boating, horse riding, and strawberry picking." }
+                ]
+            },
+            "Rajasthan": {
+                title: "Rajasthan Tour Packages",
+                destinations: [
+                    { name: "Jaipur", spots: "Amber Fort, City Palace, Hawa Mahal, Jal Mahal", activities: "Elephant rides, heritage photography, and traditional shopping." },
+                    { name: "Udaipur", spots: "Lake Pichola, City Palace, Jag Mandir", activities: "Sunset boat cruises and royal dining experiences." },
+                    { name: "Jaisalmer", spots: "Jaisalmer Fort (Golden Fort), Sam Sand Dunes, Patwon ki Haveli", activities: "Desert camel safaris, jeep safaris, and overnight camping under the stars." }
+                ]
+            },
+            "Uttar Pradesh": {
+                title: "Uttar Pradesh Tour Packages",
+                destinations: [
+                    { name: "Agra", spots: "Taj Mahal, Agra Fort, Fatehpur Sikri", activities: "Sunrise architectural tours and marble craft shopping." },
+                    { name: "Varanasi", spots: "Kashi Vishwanath Temple, Dashashwamedh Ghat, Sarnath", activities: "Evening Ganga Aarti ceremony and sunrise boat rides on the Ganges." },
+                    { name: "Lucknow", spots: "Bara Imambara, Rumi Darwaza, British Residency", activities: "Architectural exploration and traditional Awadhi food tours." }
+                ]
+            },
+            "Jammu & Kashmir": {
+                title: "Jammu & Kashmir Tour Packages",
+                destinations: [
+                    { name: "Srinagar", spots: "Dal Lake, Mughal Gardens (Shalimar Bagh), Shankaracharya Temple", activities: "Staying in a traditional houseboat and riding a shikara boat." },
+                    { name: "Gulmarg", spots: "Gulmarg Gondola, Alpather Lake", activities: "Skiing, snowboarding, and high-altitude trekking." },
+                    { name: "Pahalgam", spots: "Betaab Valley, Aru Valley, Lidder River", activities: "River rafting, pony rides, and scenic meadow picnics." }
+                ]
+            },
+            "Himachal Pradesh": {
+                title: "Himachal Pradesh Tour Packages",
+                destinations: [
+                    { name: "Shimla & Manali", spots: "The Ridge, Mall Road, Solang Valley, Atal Tunnel", activities: "Snow sports, paragliding, and colonial heritage walks." },
+                    { name: "Dharamshala & McLeod Ganj", spots: "Dalai Lama Temple complex, Bhagsu Waterfall, Triund Hill", activities: "Meditation retreats, monastery visits, and mountain trekking." }
+                ]
+            },
+            "Uttarakhand": {
+                title: "Uttarakhand Tour Packages",
+                destinations: [
+                    { name: "Rishikesh & Haridwar", spots: "Triveni Ghat, Laxman Jhula, Parmarth Niketan", activities: "River rafting, yoga retreats, and evening river prayer ceremonies." },
+                    { name: "Mussoorie", spots: "Kempty Falls, Gun Hill, Camel's Back Road", activities: "Cable car rides and scenic nature strolls." },
+                    { name: "Nainital", spots: "Naini Lake, Naina Devi Temple, Snow View Point", activities: "Boating, yachting, and ropeway rides." }
+                ]
+            },
+            "Punjab": {
+                title: "Punjab Tour Packages",
+                destinations: [
+                    { name: "Amritsar", spots: "Golden Temple, Jallianwala Bagh, Wagah Border", activities: "Participating in community kitchen (Langar) and border ceremony." },
+                    { name: "Chandigarh", spots: "Rock Garden, Sukhna Lake, Rose Garden", activities: "Architectural tours and lakeside leisure walks." }
+                ]
+            },
+            "Delhi NCR": {
+                title: "Delhi NCR Tour Packages",
+                destinations: [
+                    { name: "New Delhi & Old Delhi", spots: "Red Fort, Qutub Minar, India Gate, Humayun's Tomb, Lotus Temple", activities: "Rickshaw rides through Chandni Chowk markets and historical monument tours." }
+                ]
+            },
+            "Gujarat": {
+                title: "Gujarat Tour Packages",
+                destinations: [
+                    { name: "Ahmedabad", spots: "Sabarmati Ashram, Akshardham Temple, Adalaj Stepwell", activities: "Heritage walks in the old city and textile museum visits." },
+                    { name: "Gir National Park", spots: "Asiatic lion sanctuary, Kamleshwar Dam", activities: "Open-jeep wildlife safaris." },
+                    { name: "Kutch", spots: "Great Rann of Kutch (White Salt Desert), Kalo Dungar", activities: "Stargazing on the salt flats and cultural folk dance festivals." }
+                ]
+            },
+            "Madhya Pradesh": {
+                title: "Madhya Pradesh Tour Packages",
+                destinations: [
+                    { name: "Bhopal & Sanchi", spots: "Upper Lake, Sanchi Stupa, Bhimbetka Rock Shelters", activities: "Exploring prehistoric rock art and ancient Buddhist architecture." },
+                    { name: "Khajuraho", spots: "Western Group of Temples", activities: "Sound and light shows and architectural photography." },
+                    { name: "Bandhavgarh & Kanha", spots: "Core tiger reserves and Sal forests", activities: "Tiger-spotting jungle safaris." }
+                ]
+            },
+            "Andhra Pradesh": {
+                title: "Andhra Pradesh Tour Packages",
+                destinations: [
+                    { name: "Tirupati", spots: "Sri Venkateswara Swamy Temple on Tirumala Hills", activities: "Spiritual pilgrimage and temple darshan." },
+                    { name: "Visakhapatnam", spots: "Araku Valley, Borra Caves, RK Beach, Submarine Museum", activities: "Coastal cable car rides and train journeys through mountain tunnels." }
+                ]
+            },
+            "Telangana": {
+                title: "Telangana Tour Packages",
+                destinations: [
+                    { name: "Hyderabad", spots: "Charminar, Golconda Fort, Qutb Shahi Tombs, Ramoji Film City", activities: "Relishing authentic Hyderabadi Biryani and shopping for pearls." }
+                ]
+            },
+            "West Bengal": {
+                title: "West Bengal Tour Packages",
+                destinations: [
+                    { name: "Kolkata", spots: "Victoria Memorial, Howrah Bridge, Dakshineswar Kali Temple, Park Street", activities: "Tram rides, heritage street food tours, and book market visits." },
+                    { name: "Darjeeling", spots: "Tiger Hill, Batasia Loop, Himalayan Mountaineering Institute", activities: "Catching sunrise over Kanchenjunga and riding the Darjeeling Toy Train." },
+                    { name: "Sundarbans", spots: "Mangrove forests and tiger project areas", activities: "Boat safaris through tidal waterways." }
+                ]
+            },
+            "Odisha": {
+                title: "Odisha Tour Packages",
+                destinations: [
+                    { name: "Puri & Konark", spots: "Jagannath Temple, Puri Beach, Sun Temple at Konark", activities: "Beach relaxation, temple heritage tours, and sand art viewing." },
+                    { name: "Bhubaneswar", spots: "Lingaraj Temple, Udayagiri and Khandagiri Caves, Nandankanan Zoo", activities: "Exploring ancient temple architecture and wildlife viewing." }
+                ]
+            },
+            "Bihar": {
+                title: "Bihar Tour Packages",
+                destinations: [
+                    { name: "Patna", spots: "Golghar, Patna Sahib Gurudwara, Bihar Museum", activities: "River cruise on the Ganges and historical artifact exploration." },
+                    { name: "Bodh Gaya & Nalanda", spots: "Mahabodhi Temple, Nalanda University ruins", activities: "Meditation trails, spiritual tourism, and archaeological exploration." }
+                ]
+            },
+            "Assam / North East": {
+                title: "Assam & North East Tour Packages",
+                destinations: [
+                    { name: "Assam", spots: "Kamakhya Temple, Kaziranga National Park", activities: "Elephant and jeep safaris to spot the one-horned rhinoceros." },
+                    { name: "Meghalaya", spots: "Living Root Bridges, Nohkalikai Falls, Umiam Lake", activities: "Cave exploration and waterfall trekking." },
+                    { name: "Sikkim", spots: "Tsomgo Lake, Nathu La Pass, Pemayangtse Monastery", activities: "High-altitude mountain sightseeing and cable car rides." }
+                ]
+            }
+        };
+
+        // Initialize state selection buttons on load
+        const statesGrid = document.getElementById('statesGrid');
+        Object.keys(tourData).forEach(stateName => {
+            const btn = document.createElement('div');
+            btn.className = 'state-btn';
+            btn.innerText = stateName;
+            btn.onclick = () => showDetails(stateName);
+            statesGrid.appendChild(btn);
+        });
+
+        function showDetails(stateName) {
+            const data = tourData[stateName];
+            document.getElementById('stateTitle').innerText = data.title;
+            
+            const container = document.getElementById('destinationsContainer');
+            container.innerHTML = '';
+
+            data.destinations.forEach(dest => {
+                const card = document.createElement('div');
+                card.className = 'destination-card';
+                card.innerHTML = `
+                    <h3>${dest.name}</h3>
+                    <div class="spot-item">
+                        <div class="spot-name">Top Spots:</div>
+                        <div class="spot-details">${dest.spots}</div>
+                    </div>
+                    <div class="spot-item" style="margin-top: 8px;">
+                        <div class="spot-name">Activities:</div>
+                        <div class="spot-activities">${dest.activities}</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            // Set up WhatsApp link with pre-filled text
+            const encodedMessage = encodeURIComponent(`Hello, I would like to inquire about the tour package for ${stateName}. Please share details and pricing.`);
+            // Replace with your actual phone number in international format without '+' (e.g., 919876543210)
+            const phoneNumber = "919876543210"; 
+            document.getElementById('whatsappLink').href = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+
+            // Switch views
+            document.getElementById('selectionView').classList.remove('active');
+            document.getElementById('detailsView').classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goBack() {
+            document.getElementById('detailsView').classList.remove('active');
+            document.getElementById('selectionView').classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
 </body>
 </html>
-
